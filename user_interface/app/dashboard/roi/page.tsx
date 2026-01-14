@@ -1,14 +1,42 @@
 "use client"
 
+import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { mockROIData } from "@/lib/mock-data"
-import { DollarSign, TrendingUp, Download } from "lucide-react"
+import { DollarSign, TrendingUp, Download, Plus, Upload } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ROIPage() {
   const { overview, revenueBySource, channelPerformance } = mockROIData
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [uploadMethod, setUploadMethod] = useState<"manual" | "file">("manual")
+  const { toast } = useToast()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsDialogOpen(false)
+    toast({
+      title: "Campaign Data Added",
+      description: "Your campaign data has been successfully recorded and will be reflected in the dashboard.",
+    })
+  }
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      toast({
+        title: "File Uploaded",
+        description: `${file.name} has been uploaded and is being processed.`,
+      })
+      setIsDialogOpen(false)
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -20,10 +48,135 @@ export default function ROIPage() {
               Track performance and maximize your marketing returns
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600">
-            <Download className="mr-2 h-4 w-4" />
-            Generate Report
-          </Button>
+          <div className="flex gap-3">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Campaign Data
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[525px]">
+                <DialogHeader>
+                  <DialogTitle>Add Campaign Data</DialogTitle>
+                  <DialogDescription>
+                    Enter your campaign performance data manually or upload a report file.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="flex gap-2 mb-4">
+                  <Button
+                    type="button"
+                    variant={uploadMethod === "manual" ? "default" : "outline"}
+                    onClick={() => setUploadMethod("manual")}
+                    className="flex-1"
+                  >
+                    Manual Entry
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={uploadMethod === "file" ? "default" : "outline"}
+                    onClick={() => setUploadMethod("file")}
+                    className="flex-1"
+                  >
+                    Upload File
+                  </Button>
+                </div>
+
+                {uploadMethod === "manual" ? (
+                  <form onSubmit={handleSubmit}>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="campaign-name">Campaign Name</Label>
+                        <Input
+                          id="campaign-name"
+                          placeholder="e.g., Q1 Social Media Campaign"
+                          required
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                          <Label htmlFor="spend">Total Spend (RM)</Label>
+                          <Input
+                            id="spend"
+                            type="number"
+                            placeholder="0.00"
+                            required
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="revenue">Revenue (RM)</Label>
+                          <Input
+                            id="revenue"
+                            type="number"
+                            placeholder="0.00"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                          <Label htmlFor="conversions">Conversions</Label>
+                          <Input
+                            id="conversions"
+                            type="number"
+                            placeholder="0"
+                            required
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="channel">Channel</Label>
+                          <Input
+                            id="channel"
+                            placeholder="e.g., Google Ads"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" className="bg-gradient-to-r from-green-500 to-blue-500">
+                        Add Campaign
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                ) : (
+                  <div className="py-4">
+                    <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                      <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                      <Label
+                        htmlFor="file-upload"
+                        className="cursor-pointer"
+                      >
+                        <span className="text-sm text-primary hover:underline">
+                          Click to upload
+                        </span>
+                        <span className="text-sm text-muted-foreground"> or drag and drop</span>
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        CSV, Excel, or PDF (MAX. 10MB)
+                      </p>
+                      <Input
+                        id="file-upload"
+                        type="file"
+                        className="hidden"
+                        accept=".csv,.xlsx,.xls,.pdf"
+                        onChange={handleFileUpload}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-4">
+                      Supported formats include campaign reports from Google Ads, Facebook Ads Manager, and generic CSV templates.
+                    </p>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+            
+            <Button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600">
+              <Download className="mr-2 h-4 w-4" />
+              Generate Report
+            </Button>
+          </div>
         </div>
 
         {/* Overview Stats */}
@@ -34,7 +187,7 @@ export default function ROIPage() {
               <DollarSign className="h-4 w-4 text-green-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">${overview.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">RM{overview.totalRevenue.toLocaleString()}</div>
             </CardContent>
           </Card>
 
@@ -44,7 +197,7 @@ export default function ROIPage() {
               <DollarSign className="h-4 w-4 text-red-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">${overview.totalCost.toLocaleString()}</div>
+              <div className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">RM{overview.totalCost.toLocaleString()}</div>
             </CardContent>
           </Card>
 
@@ -94,11 +247,11 @@ export default function ROIPage() {
                       <div className="grid grid-cols-3 gap-6 text-right">
                         <div>
                           <p className="text-sm text-muted-foreground">Spend</p>
-                          <p className="font-bold text-lg text-red-400">${channel.spend.toLocaleString()}</p>
+                          <p className="font-bold text-lg text-red-400">RM{channel.spend.toLocaleString()}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Revenue</p>
-                          <p className="font-bold text-lg text-green-400">${channel.revenue.toLocaleString()}</p>
+                          <p className="font-bold text-lg text-green-400">RM{channel.revenue.toLocaleString()}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">ROI</p>
@@ -125,7 +278,7 @@ export default function ROIPage() {
                       <div className="flex items-center justify-between">
                         <p className="font-semibold text-lg">{source.source}</p>
                         <div className="text-right">
-                          <p className="font-bold text-xl bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">${source.revenue.toLocaleString()}</p>
+                          <p className="font-bold text-xl bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">RM{source.revenue.toLocaleString()}</p>
                           <p className="text-sm text-muted-foreground">{source.percentage}% of total</p>
                         </div>
                       </div>

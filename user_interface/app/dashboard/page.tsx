@@ -27,7 +27,7 @@ export default function DashboardPage() {
               <DollarSign className="h-4 w-4 text-blue-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">${stats.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">RM{stats.totalRevenue.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">
                 +20.1% from last month
               </p>
