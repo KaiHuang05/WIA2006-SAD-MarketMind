@@ -57,12 +57,12 @@ const navigation: NavigationItem[] = [
     icon: Calendar, 
     description: "Plan your content strategy" 
   },
-  { 
-    name: "Publishing", 
-    href: "/dashboard/publishing", 
-    icon: Send, 
-    description: "Publish and schedule content" 
-  },
+//  { 
+//    name: "Publishing", 
+//    href: "/dashboard/publishing", 
+//    icon: Send, 
+//    description: "Publish and schedule content" 
+//  },
   { 
     name: "Campaign & Optimization", 
     href: "/dashboard/optimization", 

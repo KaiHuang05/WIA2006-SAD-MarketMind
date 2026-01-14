@@ -119,12 +119,12 @@ export default function WelcomePage() {
       color: "from-purple-400 to-pink-400",
       description: "Track your social media performance in real-time with comprehensive analytics. Monitor mentions, engagement rates, and audience sentiment across all platforms."
     },
-    {
-      title: "Multi-Platform Publishing",
-      icon: <Share2 className="w-5 h-5" />,
-      color: "from-green-400 to-emerald-400",
-      description: "Seamlessly publish content across multiple social media platforms with a single click. Schedule posts, manage campaigns, and maintain consistent brand presence."
-    },
+//   {
+//      title: "Multi-Platform Publishing",
+//      icon: <Share2 className="w-5 h-5" />,
+//      color: "from-green-400 to-emerald-400",
+//      description: "Seamlessly publish content across multiple social media platforms with a single click. Schedule posts, manage campaigns, and maintain consistent brand presence."
+//    },
     {
       title: "Competitor Intelligence",
       icon: <Search className="w-5 h-5" />,
